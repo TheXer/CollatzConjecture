@@ -14,31 +14,30 @@ class CollatzConjecture:
     def __init__(self):
         self.numbers: List[int] = []
 
-    def recursive_collatz(self, num: int) -> int:
+    def __len__(self):
+        return len(self.numbers)
+
+    def conjecture(self, num: int) -> List[int]:
         """
-        Counting the Collatz Conjecture through recursion, it isn't the fastest snippet of code, you can probably find
-        better codes out there if your main objective is speed. This is just for visualization and training purposes.
+        For calculating the sequence. Returns a list of integers. Loop breaks when the integer equals to 1.
+        :param num: int
+        :return: List[int]
         """
         self.numbers.append(num)
-
-        if num < 0:
-            raise ValueError("Use non-negative numbers!")
-
-        elif num == 1:
-            return 1
-
-        elif num % 2 == 0:
-            result = num / 2
-            self.recursive_collatz(int(result))
-
-        else:
-            result = 3 * num + 1
-            self.recursive_collatz(int(result))
+        while num != 1:
+            if num % 2 == 0:
+                num = num // 2
+            else:
+                num = (3 * num) + 1
+            self.numbers.append(num)
+        return self.numbers
 
     def plot(self) -> plt:
+        """
+        Show a graph out of sequence
+        """
         plt.plot(self.numbers)
         for index, number in enumerate(self.numbers):
             plt.text(index, number, str(number))
         plt.grid()
         plt.show()
-
