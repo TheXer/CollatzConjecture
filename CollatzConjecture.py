@@ -1,43 +1,87 @@
-from typing import List
 import matplotlib.pyplot as plt
+from typing import List
+
+"""
+A practice code for trying out the Model-View-Controller design pattern.
+"""
 
 
-class CollatzConjecture:
+class CollatzCalculation:
     """
-    Inspired by a great Vertasium vid about it.
-    Two simple rules:
-        - If the number is even, divide by two
-        - If the number is odd, multiply by three and add one
-    Find a positive number that doesn't end in the loop 4 - 2 - 1
+    An interator class for calculation the Collatz Conjecture.
+    Theory goes like this:
+        If the number is even, divide by two.
+        If the number is odd, divide, multiply by three and add one.
+
+    Find a number that doesn't end in 4-2-1 loop.
+    For more information, see here: https://en.wikipedia.org/wiki/Collatz_conjecture
     """
 
-    def __init__(self):
-        self.numbers: List[int] = []
+    def __init__(self, num: int):
+        if num < 0:
+            raise ValueError("You should input a positive number.")
+        self.curr = num
 
-    def __len__(self):
-        return len(self.numbers)
+    def __iter__(self):
+        """
+        :return: iteratior object containing numbers of Collatz Conjecture.
+        """
+        return self
 
-    def conjecture(self, num: int) -> List[int]:
+    def __next__(self) -> int:
         """
-        For calculating the sequence. Returns a list of integers. Loop breaks when the integer equals to 1.
-        :param num: int
-        :return: List[int]
+        This works assuming that the theory of every positive number always ends in the loop of 4-2-1 numbers.
+        :return: integer number
         """
-        self.numbers.append(num)
-        while num != 1:
-            if num % 2 == 0:
-                num = num // 2
+        if self.curr != 1:
+            if self.curr % 2 == 0:
+                self.curr = self.curr // 2
+
             else:
-                num = (3 * num) + 1
-            self.numbers.append(num)
-        return self.numbers
+                self.curr = 3 * self.curr + 1
 
-    def plot(self) -> plt:
-        """
-        Show a graph out of sequence
-        """
-        plt.plot(self.numbers)
-        for index, number in enumerate(self.numbers):
-            plt.text(index, number, str(number))
-        plt.grid()
-        plt.show()
+            return self.curr
+
+        else:
+            raise StopIteration
+
+
+class GraphView:
+    """
+    View for the 'model' (CollatzCalculation class), shows graphs with the numbers.
+    """
+    def __init__(self):
+        self.plt = plt
+
+    @classmethod
+    def lentgh(cls, numbers: List[int]) -> int:
+        return len(numbers)
+
+    def plot(self, numbers: List[int]) -> plt:
+        self.plt.plot(numbers)
+
+        for index, number in enumerate(numbers):
+            self.plt.text(index, number, str(number))
+
+        self.plt.grid()
+        self.plt.show()
+
+
+class Controller:
+    """
+    Basic contorller class.
+    """
+    def __init__(self, calculation: CollatzCalculation, view: GraphView):
+        self.calculation = calculation
+        self.view = view
+
+    def get_view(self) -> plt:
+        self.view.plot(list(self.calculation))
+
+    def get_lentgh(self) -> int:
+        return self.view.lentgh(list(self.calculation))
+
+
+if __name__ == '__main__':
+    c = Controller(CollatzCalculation(87314), GraphView())
+    print(c.get_lentgh())
