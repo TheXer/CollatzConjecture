@@ -8,5 +8,6 @@ Collatz Conjecture.
 """
 
 if __name__ == '__main__':
-    c = ControllerCollatz(CollatzCalculation(91), GraphView())
+    c = ControllerCollatz(CollatzCalculation(1844674407370955161), GraphView())
     c.get_view()
+
